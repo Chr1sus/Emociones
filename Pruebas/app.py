@@ -1,11 +1,12 @@
 import cv2
 import tensorflow as tf
 import numpy as np 
+import csv 
 
 
 
 
-tflite_model_path = "/home/.../Emociones/modelo/em.tflite"
+tflite_model_path = "/home/chrisus/Tensorflow/Emociones/modelo/model.tflite"
 interpreter = tf.lite.Interpreter(model_path=tflite_model_path)
 interpreter.allocate_tensors()
 input_details = interpreter.get_input_details()
@@ -13,12 +14,26 @@ output_details = interpreter.get_output_details()
 
 input_shape = input_details[0]['shape']
 
+fields = ['Enojo','Disgusto','Miedo'
+        ,'Feliz'
+        ,'Neutral'
+        ,'Triste'
+        ,'Sorprendido'] 
+filename = "records.csv"
+
+row  = [0,0,0
+        ,0
+        ,0
+        ,0
+        ,0] 
+
+
 # Load image
 cv2.ocl.setUseOpenCL(False)
 
     # dictionary which assigns each label an emotion (alphabetical order)
 emotion_dict = {0: "Angry", 1: "Disgusted", 2: "Fearful", 3: "Happy", 4: "Neutral", 5: "Sad", 6: "Surprised"}
-
+aux=emotion_dict[4] 
     # start the webcam feed
 cap = cv2.VideoCapture(0)
 while True:
@@ -42,11 +57,23 @@ while True:
         output_data_tflite = interpreter.get_tensor(output_details[0]['index'])
 
         maxindex= int(np.argmax(output_data_tflite,axis=1))
-        cv2.putText(frame, emotion_dict[maxindex], 41(x+20, y-60), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
-
+        
+        if aux!=emotion_dict[maxindex]:
+            row[maxindex]+=1
+        aux=emotion_dict[maxindex]    
+        cv2.putText(frame, emotion_dict[maxindex], (x+20, y-60), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+        
     cv2.imshow('Video', cv2.resize(frame,(1600,960),interpolation = cv2.INTER_CUBIC))
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
+with open(filename, 'w') as csvfile: 
+    csvwriter = csv.writer(csvfile) 
+        
+    # writing the fields 
+    csvwriter.writerow(fields) 
+        
+    # writing the data rows 
+    csvwriter.writerow(row)
 cap.release()
 cv2.destroyAllWindows()
