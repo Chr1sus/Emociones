@@ -1,5 +1,5 @@
 # Emociones
-Proyecto 2 de SIstemas Emebebidos
+Proyecto 2 de Sistemas Embebidos
 Por hacer:
 Crear el codigo de la app en tensorflow lite usando el modelo funcional de tensorflow.
 Coccion de la receta.
