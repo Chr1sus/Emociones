@@ -1,13 +1,13 @@
 import cv2
-import tensorflow as tf
+import tflite_runtime.interpreter as tflite
 import numpy as np 
 import csv 
 
 
 
 
-tflite_model_path = "/home/chrisus/Tensorflow/Emociones/modelo/model.tflite"
-interpreter = tf.lite.Interpreter(model_path=tflite_model_path)
+tflite_model_path = "/home/gelatto/YP/Emociones/modelo/em.tflite"
+interpreter = tflite.Interpreter(model_path=tflite_model_path)
 interpreter.allocate_tensors()
 input_details = interpreter.get_input_details()
 output_details = interpreter.get_output_details()
